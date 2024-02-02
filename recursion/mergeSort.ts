@@ -1,10 +1,5 @@
-/**
- * 1. Split arr to half.
- * 2. Recursively halve these halves until we get N arrays of [x,y];
- * 3. Call merge() to compare these halves
- */
-
 function mergeSort(unsorted: number[]): number[] {
+  console.log({ unsorted });
   if (unsorted.length <= 1) {
     return unsorted;
   }
@@ -14,24 +9,33 @@ function mergeSort(unsorted: number[]): number[] {
   return merge(mergeSort(left), mergeSort(right));
 }
 
-function merge(left: number[], right: number[]): number[] {
-  // { left: [ 8, 5, 0, 1 ], right: [ 3, 2, 1, 13 ] }
-  const result = [];
-  // while (left.length && right.length) {
-  //   left[0] <= right[0]
-  //     ? result.push(left.shift())
-  //     : result.push(right.shift());
-  // }
+/**
+ * first loop: compares every element of left and right until
+ * either left or right has no remaining values.
+ * second & third: push the remaining values of either left / right
+ * to sorted for future use.
+ */
 
-  while (left.length) {
-    result.push(left.shift());
+function merge(left: number[], right: number[]): number[] {
+  const sorted = [];
+
+  while (left.length && right.length) {
+    left[0] <= right[0]
+      ? sorted.push(left.shift())
+      : sorted.push(right.shift());
   }
 
-  while (right.length) result.push(right.shift());
+  while (left.length && !right.length) {
+    sorted.push(left.shift());
+  }
 
-  return result as number[];
+  while (right.length && !left.length) {
+    sorted.push(right.shift());
+  }
+  console.log({ sorted });
+  return sorted as number[];
 }
 
-console.log(mergeSort([3, 2, 1, 13, 8, 5, 0, 1])); // [0, 1, 1, 2, 3, 5, 8, 13]
-console.log(mergeSort([105, 79, 100, 110])); // [79, 100, 105, 110]
+//console.log(mergeSort([3, 2, 1, 13, 8, 5, 0, 1])); // [0, 1, 1, 2, 3, 5, 8, 13]
+//console.log(mergeSort([105, 79, 100, 110])); // [79, 100, 105, 110]
 console.log(mergeSort([3, 2, 1, 13, 8, 5, 0, 1, 7]));
