@@ -109,6 +109,32 @@ export class LinkedList<T> {
     }
     return string + 'null';
   }
+
+  insertAt(value: T, index: number) {
+    if (index < 0) return null;
+    if (index === 0) return this.prepend(value);
+    const node = new Node(value);
+    const prevNode = this.at(index - 1);
+    if (prevNode) {
+      node.next = prevNode.next;
+      prevNode.next = node;
+    }
+    return this._head;
+  }
+
+  removeAt(index: number) {
+    if (index < 0 || !this._head) return null;
+    if (index === 0) {
+      this._head = this._head.next;
+      return;
+    }
+    let prevNode = this.at(index - 1);
+    if (prevNode) {
+      const next = prevNode.next;
+      prevNode.next = next ? next.next : null;
+    }
+    return this._head;
+  }
 }
 
 const linkedList = new LinkedList(); // { head: null }
@@ -126,3 +152,9 @@ console.log(linkedList.contains(999)); // false
 console.log(linkedList.find(56)); // null, inexistent value
 console.log(linkedList.find(1)); // node value 1 is at index 1
 console.log(linkedList.toString()); // (0) -> (1) -> null
+linkedList.insertAt(3, -1); // invalid index, return same head
+linkedList.insertAt(3, 1);
+console.log(linkedList.toString()); // (0) -> (3) -> (1) -> null
+linkedList.removeAt(11); // invalid index, return same head
+linkedList.removeAt(2);
+console.log(linkedList.toString()); // (0) -> (3) -> null
