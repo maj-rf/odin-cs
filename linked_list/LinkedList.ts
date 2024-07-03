@@ -137,6 +137,7 @@ export class LinkedList<T> {
   }
 }
 
+/** 
 const linkedList = new LinkedList(); // { head: null }
 linkedList.append(1);
 linkedList.append(2);
@@ -158,3 +159,4 @@ console.log(linkedList.toString()); // (0) -> (3) -> (1) -> null
 linkedList.removeAt(11); // invalid index, return same head
 linkedList.removeAt(2);
 console.log(linkedList.toString()); // (0) -> (3) -> null
+*/
