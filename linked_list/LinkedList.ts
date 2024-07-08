@@ -52,7 +52,6 @@ export class LinkedList<T> {
   }
 
   prepend(value: T) {
-    if (!this._head) return null;
     const prevHead = this._head;
     this._head = new Node(value, prevHead);
   }
