@@ -1,4 +1,7 @@
-class HashMap<T> {
+// [[key, value], [key,value], []]
+// the array inside the hashmap is a bucket that holds (k,v)
+
+class LinkedHashMap<T> {
   private capacity: number;
   private loadFactor: number;
   private size: number;
@@ -23,32 +26,68 @@ class HashMap<T> {
 
   set(key: string, value: T): void {
     const idx = this.hash(key);
-    const bucket = this.buckets[idx];
-
-    for (let i = 0; i < bucket.length; i++) {
-      if (bucket[i][0] === key) {
-        bucket[i][1] = value;
-        return;
+    let bucket = this.buckets[idx];
+    /**
+     * 1. If bucket doesn't exist, push the new entry [key, value]
+     * 2. If bucket exists and key exists (collision), change only the value
+     *    of the item that matches the key.
+     * 3. If bucket exists and key doesn't exist,
+     *    push the new entry [key, value]
+     */
+    if (bucket) {
+      const item = bucket.find((x) => x[0] === key);
+      if (item) {
+        item[1] = value;
+      } else {
+        bucket.push([key, value]);
+        this.size++;
       }
+    } else {
+      bucket = [[key, value]];
     }
-    bucket.push([key, value]);
-    this.size++;
   }
 
   get(key: string) {
-    const bucketIndex = this.hash(key);
-    const bucket = this.buckets[bucketIndex];
-    for (let i = 0; i < bucket.length; i++) {
-      if (bucket[i][0] === key) {
-        return bucket[i][1];
-      }
-    }
-
-    return null;
+    const idx = this.hash(key);
+    const item = this.buckets[idx].find((x) => x[0] === key);
+    return item ? item[1] : null;
   }
+
+  has(key: string) {
+    const idx = this.hash(key);
+    const item = this.buckets[idx].find((x) => x[0] === key);
+    return item ? true : false;
+  }
+
+  remove(key: string) {
+    const idx = this.hash(key);
+    const bucket = this.buckets[idx];
+    const removeIndex = bucket.findIndex((x) => x[0] === key);
+    if (removeIndex < 0) {
+      return false;
+    }
+    bucket.splice(removeIndex);
+    this.size--;
+    return true;
+  }
+
+  length() {
+    return this.size;
+  }
+
+  clear() {
+    this.buckets = new Array(this.capacity).fill(null).map(() => []);
+    this.size = 0;
+  }
+
+  // TODO
+  // clear()
+  // keys()
+  // values()
+  // entries()
 }
 
-const test = new HashMap();
+const test = new LinkedHashMap();
 test.set('apple', 'red');
 test.set('banana', 'yellow');
 test.set('carrot', 'orange');
@@ -61,7 +100,10 @@ test.set('ice cream', 'white');
 test.set('jacket', 'blue');
 test.set('kite', 'pink');
 test.set('lion', 'golden');
+test.set('moon', 123);
+console.log(test.get('moon')); // 123, capacity overload
 console.log(test);
-console.log(test.get('lion')); // 12
-
-console.log(test.get('moon'));
+console.log(test.remove('moonz'));
+console.log(test.remove('moon'));
+console.log(test);
+test.clear();
