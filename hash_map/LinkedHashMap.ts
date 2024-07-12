@@ -5,7 +5,7 @@ import { LinkedList } from '../linked_list/LinkedList';
  * it should be rewritten. for the usual linkedList, it should be appended.
  */
 
-class HashMap<T> {
+class LinkedHashMap<T> {
   private capacity: number;
   private loadFactor: number;
   public buckets: LinkedList<T>[];
@@ -62,7 +62,7 @@ class HashMap<T> {
   }
 }
 
-const test = new HashMap();
+const test = new LinkedHashMap();
 test.set('apple', 'red');
 test.set('banana', 'yellow');
 test.set('carrot', 'orange');
