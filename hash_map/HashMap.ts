@@ -1,7 +1,7 @@
 // [[key, value], [key,value], []]
 // the array inside the hashmap is a bucket that holds (k,v)
 
-class LinkedHashMap<T> {
+export class HashMap<T> {
   private capacity: number;
   private loadFactor: number;
   private size: number;
@@ -19,16 +19,44 @@ class LinkedHashMap<T> {
     const primeNumber = 31;
     for (let i = 0; i < key.length; i++) {
       hashCode = primeNumber * hashCode + key.charCodeAt(i);
-      hashCode = hashCode % this.capacity;
+      hashCode = hashCode;
     }
     return hashCode;
   }
 
-  set(key: string, value: T): void {
-    const idx = this.hash(key);
+  private currentLoadFactor() {
+    return this.size / this.buckets.length;
+  }
+
+  resize() {
+    const newBuckets: Array<[string, T]>[] = new Array(this.buckets.length * 2)
+      .fill(null)
+      .map(() => []);
+
+    this.buckets.forEach((bucket) => {
+      if (bucket) {
+        bucket.map(([key, value]) => {
+          const idx = this.hash(key) % newBuckets.length;
+          let currentBucket = newBuckets[idx];
+          if (currentBucket) {
+            currentBucket.push([key, value]);
+          } else {
+            currentBucket = [[key, value]];
+          }
+        });
+      }
+    });
+    this.buckets = newBuckets;
+  }
+
+  set(key: string, value: T) {
+    const idx = this.hash(key) % this.buckets.length;
+    if (idx < 0 || idx >= this.buckets.length) {
+      throw new Error('Trying to access index out of bound');
+    }
     let bucket = this.buckets[idx];
     /**
-     * 1. If bucket doesn't exist, push the new entry [key, value]
+     * 1. If bucket doesn't exist, bucket is the new entry [[key, value]]
      * 2. If bucket exists and key exists (collision), change only the value
      *    of the item that matches the key.
      * 3. If bucket exists and key doesn't exist,
@@ -41,6 +69,9 @@ class LinkedHashMap<T> {
       } else {
         bucket.push([key, value]);
         this.size++;
+        if (this.currentLoadFactor() > this.loadFactor) {
+          this.resize();
+        }
       }
     } else {
       bucket = [[key, value]];
@@ -48,19 +79,19 @@ class LinkedHashMap<T> {
   }
 
   get(key: string) {
-    const idx = this.hash(key);
+    const idx = this.hash(key) % this.buckets.length;
     const item = this.buckets[idx].find((x) => x[0] === key);
     return item ? item[1] : null;
   }
 
   has(key: string) {
-    const idx = this.hash(key);
+    const idx = this.hash(key) % this.buckets.length;
     const item = this.buckets[idx].find((x) => x[0] === key);
     return item ? true : false;
   }
 
   remove(key: string) {
-    const idx = this.hash(key);
+    const idx = this.hash(key) % this.buckets.length;
     const bucket = this.buckets[idx];
     const removeIndex = bucket.findIndex((x) => x[0] === key);
     if (removeIndex < 0) {
@@ -80,30 +111,33 @@ class LinkedHashMap<T> {
     this.size = 0;
   }
 
-  // TODO
-  // clear()
-  // keys()
-  // values()
-  // entries()
-}
+  keys() {
+    const keys: string[] = [];
+    this.buckets.forEach((bucket) => {
+      bucket.map(([key]) => {
+        if (key) keys.push(key);
+      });
+    });
+    return keys;
+  }
 
-const test = new LinkedHashMap();
-test.set('apple', 'red');
-test.set('banana', 'yellow');
-test.set('carrot', 'orange');
-test.set('dog', 'brown');
-test.set('elephant', 'gray');
-test.set('frog', 'green');
-test.set('grape', 'purple');
-test.set('hat', 'black');
-test.set('ice cream', 'white');
-test.set('jacket', 'blue');
-test.set('kite', 'pink');
-test.set('lion', 'golden');
-test.set('moon', 123);
-console.log(test.get('moon')); // 123, capacity overload
-console.log(test);
-console.log(test.remove('moonz'));
-console.log(test.remove('moon'));
-console.log(test);
-test.clear();
+  values() {
+    const values: T[] = [];
+    this.buckets.forEach((bucket) => {
+      bucket.map(([key, value]) => {
+        if (key) values.push(value);
+      });
+    });
+    return values;
+  }
+
+  entries() {
+    const entries: Array<[string, T]> = [];
+    this.buckets.forEach((bucket) => {
+      bucket.map(([key, value]) => {
+        if (key) entries.push([key, value]);
+      });
+    });
+    return entries;
+  }
+}
