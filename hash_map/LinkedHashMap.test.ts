@@ -1,0 +1,23 @@
+import { LinkedHashMap } from './LinkedHashMap';
+
+const test = new LinkedHashMap();
+test.set('apple', 'red');
+test.set('alppe', 'crimson');
+test.set('banana', 'yellow');
+test.set('carrot', 'orange');
+test.set('dog', 'brown');
+test.set('elephant', 'gray');
+test.set('frog', 'green');
+test.set('grape', 'purple');
+test.set('hat', 'black');
+test.set('ice cream', 'white');
+test.set('jacket', 'blue');
+test.set('kite', 'pink');
+test.set('lion', 'golden');
+test.set('moon', 123);
+test.set('moon', 1234);
+console.log(test._buckets);
+console.log(test.length);
+console.log(test.get('moon'));
+console.log(test.has('moonz'));
+console.log(test.has('moon'));
