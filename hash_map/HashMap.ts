@@ -28,25 +28,16 @@ export class HashMap<T> {
     return this.size / this.buckets.length;
   }
 
-  resize() {
+  private resize() {
     const newBuckets: Array<[string, T]>[] = new Array(this.buckets.length * 2)
       .fill(null)
       .map(() => []);
-
-    this.buckets.forEach((bucket) => {
-      if (bucket) {
-        bucket.map(([key, value]) => {
-          const idx = this.hash(key) % newBuckets.length;
-          let currentBucket = newBuckets[idx];
-          if (currentBucket) {
-            currentBucket.push([key, value]);
-          } else {
-            currentBucket = [[key, value]];
-          }
-        });
-      }
-    });
+    const currentEntries = this.entries();
+    this.clear();
     this.buckets = newBuckets;
+    currentEntries.forEach(([key, value]) => {
+      this.set(key, value);
+    });
   }
 
   set(key: string, value: T) {
@@ -114,9 +105,7 @@ export class HashMap<T> {
   keys() {
     const keys: string[] = [];
     this.buckets.forEach((bucket) => {
-      bucket.map(([key]) => {
-        if (key) keys.push(key);
-      });
+      bucket.map(([key]) => keys.push(key));
     });
     return keys;
   }
@@ -124,9 +113,7 @@ export class HashMap<T> {
   values() {
     const values: T[] = [];
     this.buckets.forEach((bucket) => {
-      bucket.map(([key, value]) => {
-        if (key) values.push(value);
-      });
+      bucket.map(([_, value]) => values.push(value));
     });
     return values;
   }
@@ -134,9 +121,7 @@ export class HashMap<T> {
   entries() {
     const entries: Array<[string, T]> = [];
     this.buckets.forEach((bucket) => {
-      bucket.map(([key, value]) => {
-        if (key) entries.push([key, value]);
-      });
+      bucket.map(([key, value]) => entries.push([key, value]));
     });
     return entries;
   }
