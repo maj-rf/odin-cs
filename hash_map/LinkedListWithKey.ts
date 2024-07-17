@@ -1,8 +1,7 @@
-export class Node<T> {
+export class Node {
   constructor(
     private key: string | null = null,
-    private value: T | null = null,
-    private next: Node<T> | null = null
+    private next: Node | null = null
   ) {}
 
   get _key() {
@@ -13,27 +12,19 @@ export class Node<T> {
     this.key = key;
   }
 
-  get _value() {
-    return this.value;
-  }
-
-  set _value(value: T | null) {
-    this.value = value;
-  }
-
   get _next() {
     return this.next;
   }
 
-  set _next(next: Node<T> | null) {
+  set _next(next: Node | null) {
     this.next = next;
   }
 }
 
-export class LinkedListWithKey<T> {
+export class LinkedListWithKey {
   public _head;
 
-  constructor(head: Node<T> | null = null) {
+  constructor(head: Node | null = null) {
     this._head = head;
   }
 
@@ -41,7 +32,7 @@ export class LinkedListWithKey<T> {
     return this._head;
   }
 
-  set head(node: Node<T> | null) {
+  set head(node: Node | null) {
     this._head = node;
   }
 
@@ -65,8 +56,8 @@ export class LinkedListWithKey<T> {
     return count;
   }
 
-  append(key: string, value: T | null) {
-    const node = new Node(key, value);
+  append(key: string) {
+    const node = new Node(key);
     if (!this._head) {
       this._head = node;
     } else {
@@ -77,9 +68,9 @@ export class LinkedListWithKey<T> {
     }
   }
 
-  prepend(key: string, value: T) {
+  prepend(key: string) {
     const prevHead = this._head;
-    this._head = new Node(key, value, prevHead);
+    this._head = new Node(key, prevHead);
   }
 
   at(index: number) {
@@ -129,16 +120,16 @@ export class LinkedListWithKey<T> {
     let pointer = this._head;
     let string = '';
     while (pointer !== null) {
-      string += `(${pointer._value}) -> `;
+      string += `(${pointer._key}) -> `;
       pointer = pointer._next;
     }
     return string + 'null';
   }
 
-  insertAt(key: string, value: T, index: number) {
+  insertAt(key: string, index: number) {
     if (index < 0) return null;
-    if (index === 0) return this.prepend(key, value);
-    const node = new Node(key, value);
+    if (index === 0) return this.prepend(key);
+    const node = new Node(key);
     const prevNode = this.at(index - 1);
     if (prevNode) {
       node._next = prevNode._next;

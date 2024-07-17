@@ -1,9 +1,9 @@
 import { LinkedListWithKey } from './LinkedListWithKey';
 
-export class LinkedHashMap<T> {
+export class LinkedHashMap {
   private capacity: number;
   private loadFactor: number;
-  private buckets: LinkedListWithKey<T>[];
+  private buckets: LinkedListWithKey[];
   private size: number;
 
   constructor(capacity = 16, loadFactor = 0.75) {
@@ -11,13 +11,9 @@ export class LinkedHashMap<T> {
     this.loadFactor = loadFactor;
     this.buckets = Array.from(
       { length: this.capacity },
-      () => new LinkedListWithKey<T>()
+      () => new LinkedListWithKey()
     );
     this.size = 0;
-  }
-
-  get _buckets() {
-    return this.buckets;
   }
 
   get length() {
@@ -28,29 +24,17 @@ export class LinkedHashMap<T> {
     return this.size / this.buckets.length > this.loadFactor;
   }
 
-  // private resize() {
-  //   const newBuckets: Array<[string, T]>[] = new Array(this.buckets.length * 2)
-  //     .fill(null)
-  //     .map(() => []);
-  //   const currentEntries = this.entries();
-  //   this.clear();
-  //   this.buckets = newBuckets;
-  //   currentEntries.forEach(([key, value]) => {
-  //     this.set(key, value);
-  //   });
-  // }
-
   private resize() {
     const newBuckets = Array.from(
       { length: this.capacity * 2 },
-      () => new LinkedListWithKey<T>()
+      () => new LinkedListWithKey()
     );
-    const currentEntries = this.entries();
+    const currentEntries = this.keys();
     this.buckets = newBuckets;
     this.capacity = newBuckets.length;
     this.size = 0;
-    currentEntries.forEach(([key, value]) => {
-      if (key) this.set(key, value);
+    currentEntries.forEach((key) => {
+      if (key) this.set(key);
     });
   }
 
@@ -63,18 +47,18 @@ export class LinkedHashMap<T> {
     return hashCode;
   }
 
-  set(key: string, value: T | null) {
+  set(key: string) {
     const index = this.hash(key) % this.capacity;
     if (index < 0 || index >= this.capacity) {
       throw new Error('Trying to access index out of bound');
     }
     let list = this.buckets[index];
     if (list.contains(key)) {
-      const node = list.findNodeAtKey(key);
-      if (node) node._value = value;
+      // const node = list.findNodeAtKey(key);
+      // if (node) node._value = value;
       return;
     }
-    list.append(key, value);
+    list.append(key);
     this.size++;
     if (this.isLoadFactorExceeded()) {
       this.resize();
@@ -108,7 +92,7 @@ export class LinkedHashMap<T> {
     this.capacity = 16;
     this.buckets = Array.from(
       { length: this.capacity },
-      () => new LinkedListWithKey<T>()
+      () => new LinkedListWithKey()
     );
     this.size = 0;
   }
@@ -123,29 +107,5 @@ export class LinkedHashMap<T> {
       }
     });
     return keys;
-  }
-
-  values() {
-    const values: Array<T | null> = [];
-    this.buckets.forEach((bucket) => {
-      let pointer = bucket._head;
-      while (pointer !== null) {
-        if (pointer._key) values.push(pointer._value);
-        pointer = pointer._next;
-      }
-    });
-    return values;
-  }
-
-  entries() {
-    const entries: Array<[string, T | null]> = [];
-    this.buckets.forEach((bucket) => {
-      let pointer = bucket._head;
-      while (pointer !== null) {
-        if (pointer._key) entries.push([pointer._key, pointer._value]);
-        pointer = pointer._next;
-      }
-    });
-    return entries;
   }
 }
