@@ -1,9 +1,4 @@
 import { LinkedListWithKey } from './LinkedListWithKey';
-/**
- * used LinkedList for the data structure inside the buckets
- * based on the instructions, if we call set(k,v) and there is an existing key,
- * it should be rewritten. for the usual linkedList, it should be appended.
- */
 
 export class LinkedHashMap<T> {
   private capacity: number;
@@ -29,6 +24,36 @@ export class LinkedHashMap<T> {
     return this.size;
   }
 
+  private isLoadFactorExceeded() {
+    return this.size / this.buckets.length > this.loadFactor;
+  }
+
+  // private resize() {
+  //   const newBuckets: Array<[string, T]>[] = new Array(this.buckets.length * 2)
+  //     .fill(null)
+  //     .map(() => []);
+  //   const currentEntries = this.entries();
+  //   this.clear();
+  //   this.buckets = newBuckets;
+  //   currentEntries.forEach(([key, value]) => {
+  //     this.set(key, value);
+  //   });
+  // }
+
+  private resize() {
+    const newBuckets = Array.from(
+      { length: this.capacity * 2 },
+      () => new LinkedListWithKey<T>()
+    );
+    const currentEntries = this.entries();
+    this.buckets = newBuckets;
+    this.capacity = newBuckets.length;
+    this.size = 0;
+    currentEntries.forEach(([key, value]) => {
+      if (key) this.set(key, value);
+    });
+  }
+
   hash(key: string) {
     let hashCode = 0;
     const primeNumber = 31;
@@ -38,7 +63,7 @@ export class LinkedHashMap<T> {
     return hashCode;
   }
 
-  set(key: string, value: T) {
+  set(key: string, value: T | null) {
     const index = this.hash(key) % this.capacity;
     if (index < 0 || index >= this.capacity) {
       throw new Error('Trying to access index out of bound');
@@ -46,11 +71,14 @@ export class LinkedHashMap<T> {
     let list = this.buckets[index];
     if (list.contains(key)) {
       const node = list.findNodeAtKey(key);
-      if (node) node._key = key;
+      if (node) node._value = value;
       return;
     }
     list.append(key, value);
     this.size++;
+    if (this.isLoadFactorExceeded()) {
+      this.resize();
+    }
   }
 
   get(key: string) {
@@ -63,5 +91,61 @@ export class LinkedHashMap<T> {
     const index = this.hash(key) % this.capacity;
     const node = this.buckets[index].findNodeAtKey(key);
     return Boolean(node?._key);
+  }
+
+  remove(key: string) {
+    const index = this.hash(key) % this.capacity;
+    const nodeIndex = this.buckets[index].find(key);
+    if (nodeIndex !== null) {
+      this.buckets[index].removeAt(nodeIndex);
+      this.size--;
+      return true;
+    }
+    return false;
+  }
+
+  clear() {
+    this.capacity = 16;
+    this.buckets = Array.from(
+      { length: this.capacity },
+      () => new LinkedListWithKey<T>()
+    );
+    this.size = 0;
+  }
+
+  keys() {
+    const keys: string[] = [];
+    this.buckets.forEach((bucket) => {
+      let pointer = bucket._head;
+      while (pointer !== null) {
+        if (pointer._key) keys.push(pointer._key);
+        pointer = pointer._next;
+      }
+    });
+    return keys;
+  }
+
+  values() {
+    const values: Array<T | null> = [];
+    this.buckets.forEach((bucket) => {
+      let pointer = bucket._head;
+      while (pointer !== null) {
+        if (pointer._key) values.push(pointer._value);
+        pointer = pointer._next;
+      }
+    });
+    return values;
+  }
+
+  entries() {
+    const entries: Array<[string, T | null]> = [];
+    this.buckets.forEach((bucket) => {
+      let pointer = bucket._head;
+      while (pointer !== null) {
+        if (pointer._key) entries.push([pointer._key, pointer._value]);
+        pointer = pointer._next;
+      }
+    });
+    return entries;
   }
 }

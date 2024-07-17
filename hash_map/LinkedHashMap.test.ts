@@ -13,11 +13,17 @@ test.set('hat', 'black');
 test.set('ice cream', 'white');
 test.set('jacket', 'blue');
 test.set('kite', 'pink');
-test.set('lion', 'golden');
-test.set('moon', 123);
-test.set('moon', 1234);
-console.log(test._buckets);
-console.log(test.length);
-console.log(test.get('moon'));
-console.log(test.has('moonz'));
-console.log(test.has('moon'));
+test.set('moon', 123); // overload & resize buckets to double capacity => 32
+test.set('moon', 1234); // overwrite value
+console.log(test.get('moon')); // { key: 'moon', value: 1234, next: null }
+console.log(test.length); // 13
+console.log(test.has('moonz')); // false
+console.log(test.has('moon')); // true
+console.log(test.remove('moon')); // true & remove moon node
+test.set('never', 'gonna');
+test.set('give', 'you');
+test.set('up', null);
+console.log(test.length); // 15
+console.log(test.keys());
+console.log(test.values());
+console.log(test.entries());

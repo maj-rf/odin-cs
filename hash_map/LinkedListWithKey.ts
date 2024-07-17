@@ -65,7 +65,7 @@ export class LinkedListWithKey<T> {
     return count;
   }
 
-  append(key: string, value: T) {
+  append(key: string, value: T | null) {
     const node = new Node(key, value);
     if (!this._head) {
       this._head = node;
