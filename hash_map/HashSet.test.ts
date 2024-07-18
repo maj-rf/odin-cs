@@ -1,6 +1,6 @@
-import { LinkedHashMap } from './HashSet';
+import { HashSet } from './HashSet';
 
-const test = new LinkedHashMap();
+const test = new HashSet();
 test.set('apple');
 test.set('alppe');
 test.set('banana');

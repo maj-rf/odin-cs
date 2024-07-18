@@ -1,6 +1,6 @@
 import { LinkedListWithKey } from './LinkedListWithKey';
 
-export class LinkedHashMap {
+export class HashSet {
   private capacity: number;
   private loadFactor: number;
   private buckets: LinkedListWithKey[];
