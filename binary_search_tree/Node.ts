@@ -1,21 +1,30 @@
-type Data = number | null;
-
 export class Node {
   constructor(
-    private _key: Data = null,
-    private _left: Data = null,
-    private _right: Data = null
+    private _key: number,
+    private _left?: Node,
+    private _right?: Node
   ) {}
 
-  set key(value: Data) {
+  get key() {
+    return this._key;
+  }
+
+  set key(value: number) {
     this._key = value;
   }
 
-  set left(value: Data) {
+  get right() {
+    return this._right;
+  }
+
+  get left() {
+    return this._left;
+  }
+  set left(value: Node | undefined) {
     this._left = value;
   }
 
-  set right(value: Data) {
+  set right(value: Node | undefined) {
     this._right = value;
   }
 }
