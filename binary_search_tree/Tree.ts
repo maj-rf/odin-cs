@@ -40,13 +40,56 @@ class Tree {
     return root;
   }
 
+  private getMinValueOfTree(root: Node | undefined) {
+    if (!root) return;
+    while (root.left) {
+      root = root.left;
+    }
+    return root.key;
+  }
+
+  private deleteRecursion(key: number, root: Node | undefined) {
+    /**
+     * 1. Deleting a leaf. Only change the node that points to that tree.
+     * 2. Delete a node with 1 child. The deleted node's parent will point
+     *    to the deleted node's child.
+     * 3. Delete a node with left & right child. Find the inorder successor
+     *   (the minimum value at the right node), cut and replace the deleted node.
+     */
+    if (!root) return;
+    if (key > root.key) {
+      root.right = this.deleteRecursion(key, root.right);
+    } else if (key < root.key) {
+      root.left = this.deleteRecursion(key, root.left);
+    } else {
+      if (root.left === undefined) return root.right;
+      if (root.right === undefined) return root.left;
+      const minValue = this.getMinValueOfTree(root.right);
+      if (minValue) root.key = minValue;
+      root.right = this.deleteRecursion(root.key, root.right);
+    }
+    return root;
+  }
+
   insert(value: number) {
     this.insertRecursion(value, this.root);
   }
 
+  deleteItem(value: number) {
+    this.deleteRecursion(value, this.root);
+  }
+
+  find(value: number) {
+    let root = this.root;
+    if (!root) return;
+    while (root) {
+      if (value > root.key) root = root.right;
+      else if (value < root.key) root = root.left;
+      else return root;
+    }
+  }
+
   // TODO
-  // deleteItem(value:number)
-  // find(value:number)
   // levelOrder(callback)
   // inOrder(callback)
   // preOrder(callback)
@@ -60,3 +103,6 @@ class Tree {
 const tree = new Tree([2, 1, 3, 5, 7, 8, 6]);
 tree.insert(9);
 prettyPrint(tree.root);
+tree.deleteItem(7);
+prettyPrint(tree.root);
+console.log(tree.find(9));
