@@ -89,6 +89,40 @@ class Tree {
     }
   }
 
+  // Breadth First Traversal (level by level)
+  // use Queue : First In, First Out (FIFO)
+  levelOrder(callback?: Function) {
+    if (!this.root) return [];
+    const queue = [this.root];
+    const results = [];
+    while (queue.length) {
+      // dequeue
+      const node = queue.shift();
+      if (!node) return;
+      // queue if left or right nodes exist.
+      if (node.left) queue.push(node.left);
+      if (node.right) queue.push(node.right);
+      results.push(node.key);
+    }
+    if (callback) return callback(results);
+    return results;
+  }
+  /**
+   * 3 methods for depth-first traversal
+   * Stack: Last In, First Out (LIFO)
+   * Preorder and Postorder uses stack.
+   * Inorder uses iteration.
+   */
+
+  // root left right
+  // preorder
+
+  // left root right
+  // inorder
+
+  // left right root
+  // postorder
+
   // TODO
   // levelOrder(callback)
   // inOrder(callback)
@@ -106,3 +140,4 @@ prettyPrint(tree.root);
 tree.deleteItem(7);
 prettyPrint(tree.root);
 console.log(tree.find(9));
+console.log(tree.levelOrder());
