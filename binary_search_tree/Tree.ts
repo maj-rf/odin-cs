@@ -109,25 +109,62 @@ class Tree {
   }
   /**
    * 3 methods for depth-first traversal
-   * Stack: Last In, First Out (LIFO)
-   * Preorder and Postorder uses stack.
-   * Inorder uses iteration.
+   * use Stack: Last In, First Out (LIFO)
    */
 
-  // root left right
-  // preorder
+  // preorder (root left right)
+  preOrder(callback?: Function) {
+    if (!this.root) return [];
+    const stack = [this.root];
+    const results = [];
+    while (stack.length) {
+      const node = stack.pop();
+      if (!node) return;
+      if (node.right) stack.push(node.right);
+      if (node.left) stack.push(node.left);
+      results.push(node.key);
+    }
+    if (callback) return callback(results);
+    return results;
+  }
 
-  // left root right
-  // inorder
+  // inorder (left root right)
+  inOrder(callback?: Function) {
+    if (!this.root) return [];
+    const stack: (Node | undefined)[] = [];
+    const results = [];
+    let currentNode = this._root;
+    while (currentNode || stack.length) {
+      while (currentNode?.key) {
+        stack.push(currentNode);
+        currentNode = currentNode.left;
+      }
+      const node = stack.pop();
+      if (!node) return;
+      results.push(node.key);
+      currentNode = node.right;
+    }
+    if (callback) return callback(results);
+    return results;
+  }
 
-  // left right root
-  // postorder
+  // postorder (left right root)
+  postOrder(callback?: Function) {
+    if (!this.root) return [];
+    const stack = [this.root];
+    const results = [];
+    while (stack.length) {
+      const node = stack.pop();
+      if (!node) return;
+      if (node.left) stack.push(node.left);
+      if (node.right) stack.push(node.right);
+      results.push(node.key);
+    }
+    if (callback) return callback(results);
+    return results.reverse();
+  }
 
   // TODO
-  // levelOrder(callback)
-  // inOrder(callback)
-  // preOrder(callback)
-  // postOrder(callback)
   // height(node)
   // depth(node)
   // isBalanced()
@@ -141,3 +178,6 @@ tree.deleteItem(7);
 prettyPrint(tree.root);
 console.log(tree.find(9));
 console.log(tree.levelOrder());
+console.log(tree.preOrder());
+console.log(tree.postOrder());
+console.log(tree.inOrder());
