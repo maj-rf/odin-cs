@@ -218,9 +218,50 @@ class Tree {
   } 
   */
 
+  height(node: Node | undefined): number {
+    if (!node) return -1;
+    let leftHeight = this.height(node.left);
+    let rightHeight = this.height(node.right);
+    return leftHeight > rightHeight ? leftHeight + 1 : rightHeight + 1;
+  }
+
+  depth(node: Node | undefined, root = this._root): number {
+    if (!node || !root) return -1;
+    if (node.key === root.key) return 0;
+    if (node.key < root.key) {
+      return 1 + this.depth(node, root.left);
+    } else {
+      return 1 + this.depth(node, root.right);
+    }
+  }
+
+  isBalanced(): Boolean {
+    if (!this.root) return true;
+    const stack = [this.root];
+    while (stack.length > 0) {
+      const node = stack.pop();
+      if (!node) return false;
+      const leftHeight = !node.left ? -1 : this.depth(node.left);
+      const rightHeight = !node.right ? -1 : this.depth(node.right);
+      if (Math.abs(leftHeight - rightHeight) > 1) {
+        return false;
+      }
+      if (node.left) {
+        stack.push(node.left);
+      }
+      if (node.right) {
+        stack.push(node.right);
+      }
+    }
+    return true;
+  }
+
+  rebalance() {
+    if (this.isBalanced()) return;
+    const inorder = this.inOrder();
+    this.root = this.buildTree(inorder);
+  }
   // TODO
-  // height(node)
-  // depth(node)
   // isBalanced()
   // rebalance()
 }
@@ -230,8 +271,15 @@ tree.insert(9);
 prettyPrint(tree.root);
 tree.deleteItem(7);
 prettyPrint(tree.root);
-console.log(tree.find(9));
+console.log(tree.find(9)); // { _key: 9, _left: undefined, _right: undefined }
 console.log(tree.levelOrder());
 console.log(tree.preOrder());
 console.log(tree.postOrder());
 console.log(tree.inOrder());
+console.log(tree.height(tree.root)); // 2
+console.log(tree.height(tree.find(9))); // 0 -> leaf node
+console.log(tree.height(tree.find(3))); // 0 -> also a leaf node
+console.log(tree.depth(tree.find(5))); // 0 -> depth of root node
+console.log(tree.depth(tree.find(2))); // 1
+console.log(tree.depth(tree.find(11))); // -1
+console.log(tree.isBalanced());
