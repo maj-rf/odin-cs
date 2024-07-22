@@ -128,6 +128,24 @@ class Tree {
     return results;
   }
 
+  /*  
+  // Recursive preOrder 
+  preOrder(callback?: Function) {
+    const result: number[] = [];
+    if (!this._root) return;
+    this.preOrderTraversal(result, this._root, callback);
+    return result;
+  }
+
+  preOrderTraversal(result: number[], node?: Node, callback?: Function) {
+    if (!node) return result;
+    if (callback) return callback(node);
+    result.push(node.key);
+    this.preOrderTraversal(result, node.left, callback);
+    this.preOrderTraversal(result, node.right, callback);
+  } 
+  */
+
   // inorder (left root right)
   inOrder(callback?: Function) {
     if (!this.root) return [];
@@ -148,6 +166,24 @@ class Tree {
     return results;
   }
 
+  /*   
+  // Recursive inOrder
+  inOrder(callback?: Function) {
+    const result: number[] = [];
+    if (!this._root) return;
+    this.inOrderTraversal(result, this._root, callback);
+    return result;
+  }
+
+  inOrderTraversal(result: number[], node?: Node, callback?: Function) {
+    if (!node) return result;
+    if (callback) return callback(node);
+    this.inOrderTraversal(result, node.left, callback);
+    result.push(node.key);
+    this.inOrderTraversal(result, node.right, callback);
+  } 
+  */
+
   // postorder (left right root)
   postOrder(callback?: Function) {
     if (!this.root) return [];
@@ -163,6 +199,24 @@ class Tree {
     if (callback) return callback(results);
     return results.reverse();
   }
+
+  /*   
+  // Recursive postOrder
+  postOrder(callback?: Function) {
+    const result: number[] = [];
+    if (!this._root) return;
+    this.postOrderTraversal(result, this._root, callback);
+    return result;
+  }
+
+  postOrderTraversal(result: number[], node?: Node, callback?: Function) {
+    if (!node) return result;
+    if (callback) return callback(node);
+    this.postOrderTraversal(result, node.left, callback);
+    this.postOrderTraversal(result, node.right, callback);
+    result.push(node.key);
+  } 
+  */
 
   // TODO
   // height(node)
