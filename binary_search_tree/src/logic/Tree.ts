@@ -1,7 +1,7 @@
 import { Node } from './Node';
-import { prettyPrint } from './prettyPrint';
+//import { prettyPrint } from './prettyPrint';
 
-class Tree {
+export class Tree {
   private _root?: Node;
   constructor(array: number[]) {
     this._root = this.buildTree(array);
@@ -91,10 +91,10 @@ class Tree {
 
   // Breadth First Traversal (level by level)
   // use Queue : First In, First Out (FIFO)
-  levelOrder(callback?: Function) {
+  levelOrder(callback?: (value: number) => void) {
     if (!this.root) return [];
     const queue = [this.root];
-    const results = [];
+    const results: number[] = [];
     while (queue.length) {
       // dequeue
       const node = queue.shift();
@@ -102,9 +102,9 @@ class Tree {
       // queue if left or right nodes exist.
       if (node.left) queue.push(node.left);
       if (node.right) queue.push(node.right);
+      if (callback) callback(node.key);
       results.push(node.key);
     }
-    if (callback) return callback(results);
     return results;
   }
   /**
@@ -113,18 +113,18 @@ class Tree {
    */
 
   // preorder (root left right)
-  preOrder(callback?: Function) {
+  preOrder(callback?: (value: number) => void) {
     if (!this.root) return [];
     const stack = [this.root];
-    const results = [];
+    const results: number[] = [];
     while (stack.length) {
       const node = stack.pop();
       if (!node) return;
       if (node.right) stack.push(node.right);
       if (node.left) stack.push(node.left);
+      if (callback) callback(node.key);
       results.push(node.key);
     }
-    if (callback) return callback(results);
     return results;
   }
 
@@ -147,10 +147,10 @@ class Tree {
   */
 
   // inorder (left root right)
-  inOrder(callback?: Function) {
+  inOrder(callback?: (value: number) => void) {
     if (!this.root) return [];
     const stack: (Node | undefined)[] = [];
-    const results = [];
+    const results: number[] = [];
     let currentNode = this._root;
     while (currentNode || stack.length) {
       while (currentNode?.key) {
@@ -159,10 +159,10 @@ class Tree {
       }
       const node = stack.pop();
       if (!node) return;
+      if (callback) callback(node.key);
       results.push(node.key);
       currentNode = node.right;
     }
-    if (callback) return callback(results);
     return results;
   }
 
@@ -185,18 +185,18 @@ class Tree {
   */
 
   // postorder (left right root)
-  postOrder(callback?: Function) {
+  postOrder(callback?: (value: number) => void) {
     if (!this.root) return [];
     const stack = [this.root];
-    const results = [];
+    const results: number[] = [];
     while (stack.length) {
       const node = stack.pop();
       if (!node) return;
       if (node.left) stack.push(node.left);
       if (node.right) stack.push(node.right);
+      if (callback) callback(node.key);
       results.push(node.key);
     }
-    if (callback) return callback(results);
     return results.reverse();
   }
 
@@ -220,8 +220,8 @@ class Tree {
 
   height(node: Node | undefined): number {
     if (!node) return -1;
-    let leftHeight = this.height(node.left);
-    let rightHeight = this.height(node.right);
+    const leftHeight = this.height(node.left);
+    const rightHeight = this.height(node.right);
     return leftHeight > rightHeight ? leftHeight + 1 : rightHeight + 1;
   }
 
@@ -235,7 +235,7 @@ class Tree {
     }
   }
 
-  isBalanced(): Boolean {
+  isBalanced(): boolean {
     if (!this.root) return true;
     const stack = [this.root];
     while (stack.length > 0) {
@@ -259,27 +259,6 @@ class Tree {
   rebalance() {
     if (this.isBalanced()) return;
     const inorder = this.inOrder();
-    this.root = this.buildTree(inorder);
+    this.root = inorder ? this.buildTree(inorder) : this._root;
   }
-  // TODO
-  // isBalanced()
-  // rebalance()
 }
-
-const tree = new Tree([2, 1, 3, 5, 7, 8, 6]);
-tree.insert(9);
-prettyPrint(tree.root);
-tree.deleteItem(7);
-prettyPrint(tree.root);
-console.log(tree.find(9)); // { _key: 9, _left: undefined, _right: undefined }
-console.log(tree.levelOrder());
-console.log(tree.preOrder());
-console.log(tree.postOrder());
-console.log(tree.inOrder());
-console.log(tree.height(tree.root)); // 2
-console.log(tree.height(tree.find(9))); // 0 -> leaf node
-console.log(tree.height(tree.find(3))); // 0 -> also a leaf node
-console.log(tree.depth(tree.find(5))); // 0 -> depth of root node
-console.log(tree.depth(tree.find(2))); // 1
-console.log(tree.depth(tree.find(11))); // -1
-console.log(tree.isBalanced());
