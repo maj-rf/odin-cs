@@ -1,12 +1,14 @@
-import { useState } from 'react';
-import { Tree } from './logic/Tree';
 import { PrintTree } from './components/PrintTree';
+import { TreeForm } from './components/TreeForm';
+import { useBST } from './useBST';
 
 function App() {
-  const [tree, setTree] = useState(new Tree([2, 1, 3, 5, 7, 8, 6, 9]));
+  const { tree, insertNode } = useBST();
 
   return (
     <div>
+      <p className="break-words">{`[${tree.inOrder()?.toString()}]`}</p>
+      <TreeForm insertNode={insertNode} />
       <PrintTree root={tree.root} />
     </div>
   );
