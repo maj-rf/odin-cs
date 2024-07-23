@@ -1,16 +1,17 @@
+import { Layout } from './components/Layout';
 import { PrintTree } from './components/PrintTree';
 import { TreeForm } from './components/TreeForm';
+import { TreeInformation } from './components/Information';
 import { useBST } from './useBST';
 
 function App() {
-  const { tree, insertNode } = useBST();
-
+  const bst = useBST();
   return (
-    <div>
-      <p className="break-words">{`[${tree.inOrder()?.toString()}]`}</p>
-      <TreeForm insertNode={insertNode} />
-      <PrintTree root={tree.root} />
-    </div>
+    <Layout>
+      <PrintTree root={bst.tree.root} />
+      <TreeInformation tree={bst.tree} />
+      <TreeForm {...bst} />
+    </Layout>
   );
 }
 

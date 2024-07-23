@@ -12,29 +12,35 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from './ui/input';
+import { Tree } from '@/logic/Tree';
 
 type TreeFormProps = {
+  tree: Tree;
   insertNode: (node: number) => void;
+  updateTree: (arr: number[]) => void;
+  deleteNode: (node: number) => void;
+  rebalance: () => void;
 };
 
 const formSchema = z.object({
   nodes: z.array(z.number()),
-  node: z.coerce.number(),
+  node: z.coerce.number().optional(),
 });
 
-export const TreeForm = ({ insertNode }: TreeFormProps) => {
+export const TreeForm = (props: TreeFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nodes: [],
-      node: 43,
+      node: 42,
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    insertNode(values.node);
+    if (values.node) {
+      props.insertNode(values.node);
+      form.reset();
+    }
   }
 
   return (
@@ -57,6 +63,9 @@ export const TreeForm = ({ insertNode }: TreeFormProps) => {
           )}
         />
         <Button type="submit">Submit</Button>
+        <Button type="button" onClick={props.rebalance}>
+          Rebalance
+        </Button>
       </form>
     </Form>
   );
