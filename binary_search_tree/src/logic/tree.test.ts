@@ -17,4 +17,4 @@ console.log(tree.height(tree.find(3))); // 0 -> also a leaf node
 console.log(tree.depth(tree.find(5))); // 0 -> depth of root node
 console.log(tree.depth(tree.find(2))); // 1
 console.log(tree.depth(tree.find(11))); // -1
-console.log(tree.isBalanced());
+console.log(tree.isBalanced(tree.root));
