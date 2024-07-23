@@ -13,7 +13,7 @@ export function prettyPrint(
     prettyPrint(node.right, `${prefix}${isLeft ? '│   ' : '    '}`, false, str);
   }
 
-  str.push(`${prefix}${isLeft ? '└─> ' : '┌─> '}${node.key}`);
+  str.push(`${prefix}${isLeft ? '└─→ ' : '┌─→ '}${node.key}`);
   if (node.left !== null) {
     prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true, str);
   }

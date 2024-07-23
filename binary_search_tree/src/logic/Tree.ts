@@ -235,29 +235,20 @@ export class Tree {
     }
   }
 
-  isBalanced(): boolean {
-    if (!this.root) return true;
-    const stack = [this.root];
-    while (stack.length > 0) {
-      const node = stack.pop();
-      if (!node) return false;
-      const leftHeight = !node.left ? -1 : this.depth(node.left);
-      const rightHeight = !node.right ? -1 : this.depth(node.right);
-      if (Math.abs(leftHeight - rightHeight) > 1) {
-        return false;
-      }
-      if (node.left) {
-        stack.push(node.left);
-      }
-      if (node.right) {
-        stack.push(node.right);
-      }
-    }
-    return true;
+  isBalanced(root: Node | undefined): boolean {
+    if (!root) return true;
+    const lh = this.height(root.left);
+    const rh = this.height(root.right);
+    if (
+      Math.abs(lh - rh) <= 1 &&
+      this.isBalanced(root.left) &&
+      this.isBalanced(root.right)
+    )
+      return true;
+    else return false;
   }
 
   rebalance() {
-    if (this.isBalanced()) return;
     const inorder = this.inOrder();
     this.root = inorder ? this.buildTree(inorder) : this._root;
   }
