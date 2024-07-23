@@ -23,7 +23,7 @@ export class Tree {
      * 2. create a Node using the midpoint & use
      *    recursion to build the left node & right nodes.
      */
-    const mid = Math.floor(sorted.length / 2);
+    const mid = Math.floor((sorted.length - 1) / 2);
     const node = new Node(sorted[mid]);
     node.left = this.buildTree(sorted.slice(0, mid));
     node.right = this.buildTree(sorted.slice(mid + 1));
