@@ -14,10 +14,10 @@ A binary tree is a data structure in CS where each node has at most two children
 
 ```mermaid
    graph TD;
-      6((6))---3((3))---2((2))---1((1));
-      3((3))---5((5));
-      6((6))---8((8))---7((7))
-      8((8))---9((9))
+      5((5))---7((7))---8((8))---9((9));
+      7((7))---6((6));
+      5((5))---2((2))---3((3))
+      2((2))---1((1))
 ```
 
-The Root Node is `6`. The Leaves are `1, 5, 7, 9.` The depth of `6` which is the Root Node is `0`. The depth of `1` is `3` (6 -> 3 -> 2 -> 1). The height of the tree is `3`. The height of node `1` is `0`. The height of node `3` is `2`.
+The Root Node is `5`. The Leaves are `1, 3, 6, 9.` The depth of `5` which is the Root Node is `0`. The depth of `9` is `3` (5 -> 7 -> 8 -> 9). The height of the tree is `3`. The height of node `1` is `0`. The height of node `7` is `2`.
