@@ -56,7 +56,7 @@ export class Tree {
      * 3. Delete a node with left & right child. Find the inorder successor
      *   (the minimum value at the right node), cut and replace the deleted node.
      */
-    if (!root) return;
+    if (!root || !key) return;
     if (key > root.key) {
       root.right = this.deleteRecursion(key, root.right);
     } else if (key < root.key) {
