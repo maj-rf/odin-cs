@@ -14,6 +14,7 @@ import {
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Tree } from '@/logic/Tree';
+import { useState } from 'react';
 
 type TreeFormProps = {
   tree: Tree;
@@ -21,21 +22,25 @@ type TreeFormProps = {
   updateTree: (arr: number[]) => void;
   deleteNode: (node: number) => void;
   rebalance: () => void;
+  //findDepth: (node: number) => number;
 };
 
 const formSchema = z.object({
   nodes: z.string(),
   node: z.string(),
   deleteNode: z.string(),
+  nodeDepth: z.string(),
 });
 
 export const TreeForm = (props: TreeFormProps) => {
+  const [depth, setDepth] = useState(0);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nodes: '',
       node: '',
       deleteNode: '',
+      nodeDepth: '',
     },
   });
 
@@ -88,6 +93,23 @@ export const TreeForm = (props: TreeFormProps) => {
     }
     props.deleteNode(parseInt(values.deleteNode));
     form.reset({ deleteNode: '' });
+  }
+
+  function onFindDepth(values: z.infer<typeof formSchema>) {
+    const currentNode = parseInt(values.nodeDepth);
+    if (isNaN(currentNode)) {
+      form.setError('nodeDepth', {
+        type: 'min',
+        message: 'Required. Number strings only.',
+      });
+      return;
+    }
+    setDepth((prev) => {
+      const depth = props.tree.depth(props.tree.find(currentNode));
+      prev = depth;
+      return prev;
+    });
+    form.reset({ nodeDepth: '' });
   }
 
   return (
@@ -178,6 +200,38 @@ export const TreeForm = (props: TreeFormProps) => {
           >
             Delete
           </Button>
+        </div>
+        <div>
+          <FormField
+            control={form.control}
+            name="nodeDepth"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Find the depth of node</FormLabel>
+                <FormControl>
+                  <Input placeholder="Find any number." {...field} />
+                </FormControl>
+                <FormDescription>
+                  The node used to find the depth.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="sm:flex sm:items-center sm:gap-2 space-y-2">
+            <Button
+              type="button"
+              className="w-full sm:w-max mt-2"
+              onClick={form.handleSubmit(onFindDepth)}
+            >
+              Find Depth
+            </Button>
+            {depth === -1 ? (
+              <p className="text-sm">Node not found.</p>
+            ) : (
+              <p className="text-sm">{`Depth of node is: ${depth} `}</p>
+            )}
+          </div>
         </div>
       </form>
     </Form>
