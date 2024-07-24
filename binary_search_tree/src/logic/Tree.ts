@@ -146,43 +146,46 @@ export class Tree {
   } 
   */
 
-  // inorder (left root right)
-  inOrder(callback?: (value: number) => void) {
-    if (!this.root) return [];
-    const stack: (Node | undefined)[] = [];
-    const results: number[] = [];
-    let currentNode = this._root;
-    while (currentNode || stack.length) {
-      while (currentNode?.key) {
-        stack.push(currentNode);
-        currentNode = currentNode.left;
-      }
-      const node = stack.pop();
-      if (!node) return;
-      if (callback) callback(node.key);
-      results.push(node.key);
-      currentNode = node.right;
-    }
-    return results;
-  }
+  // // inorder (left root right)
+  // inOrder(callback?: (value: number) => void) {
+  //   let currentNode = this._root;
+  //   if (!currentNode) return [];
+  //   const stack: Node[] = [];
+  //   const results: number[] = [];
 
-  /*   
+  //   while (currentNode || stack.length) {
+  //     while (currentNode && currentNode.key) {
+  //       stack.push(currentNode);
+  //       currentNode = currentNode.left;
+  //     }
+  //     const node = stack.pop();
+  //     if (!node) return;
+  //     if (callback) callback(node.key);
+  //     results.push(node.key);
+  //     currentNode = node.right;
+  //   }
+  //   return results;
+  // }
+
   // Recursive inOrder
-  inOrder(callback?: Function) {
+  inOrder(callback?: (value: number) => void) {
     const result: number[] = [];
     if (!this._root) return;
     this.inOrderTraversal(result, this._root, callback);
     return result;
   }
 
-  inOrderTraversal(result: number[], node?: Node, callback?: Function) {
+  inOrderTraversal(
+    result: number[],
+    node?: Node,
+    callback?: (value: number) => void
+  ) {
     if (!node) return result;
-    if (callback) return callback(node);
+    if (callback) return callback(node.key);
     this.inOrderTraversal(result, node.left, callback);
     result.push(node.key);
     this.inOrderTraversal(result, node.right, callback);
-  } 
-  */
+  }
 
   // postorder (left right root)
   postOrder(callback?: (value: number) => void) {
