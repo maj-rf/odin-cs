@@ -1,7 +1,7 @@
 import { Node } from './Node';
-import { prettyPrint } from './prettyPrint';
+//import { prettyPrint } from './prettyPrint';
 
-class Tree {
+export class Tree {
   private _root?: Node;
   constructor(array: number[]) {
     this._root = this.buildTree(array);
@@ -23,7 +23,7 @@ class Tree {
      * 2. create a Node using the midpoint & use
      *    recursion to build the left node & right nodes.
      */
-    const mid = Math.floor(sorted.length / 2);
+    const mid = Math.floor((sorted.length - 1) / 2);
     const node = new Node(sorted[mid]);
     node.left = this.buildTree(sorted.slice(0, mid));
     node.right = this.buildTree(sorted.slice(mid + 1));
@@ -56,7 +56,7 @@ class Tree {
      * 3. Delete a node with left & right child. Find the inorder successor
      *   (the minimum value at the right node), cut and replace the deleted node.
      */
-    if (!root) return;
+    if (!root || !key) return;
     if (key > root.key) {
       root.right = this.deleteRecursion(key, root.right);
     } else if (key < root.key) {
@@ -91,10 +91,10 @@ class Tree {
 
   // Breadth First Traversal (level by level)
   // use Queue : First In, First Out (FIFO)
-  levelOrder(callback?: Function) {
+  levelOrder(callback?: (value: number) => void) {
     if (!this.root) return [];
     const queue = [this.root];
-    const results = [];
+    const results: number[] = [];
     while (queue.length) {
       // dequeue
       const node = queue.shift();
@@ -102,9 +102,9 @@ class Tree {
       // queue if left or right nodes exist.
       if (node.left) queue.push(node.left);
       if (node.right) queue.push(node.right);
+      if (callback) callback(node.key);
       results.push(node.key);
     }
-    if (callback) return callback(results);
     return results;
   }
   /**
@@ -113,18 +113,18 @@ class Tree {
    */
 
   // preorder (root left right)
-  preOrder(callback?: Function) {
+  preOrder(callback?: (value: number) => void) {
     if (!this.root) return [];
     const stack = [this.root];
-    const results = [];
+    const results: number[] = [];
     while (stack.length) {
       const node = stack.pop();
       if (!node) return;
       if (node.right) stack.push(node.right);
       if (node.left) stack.push(node.left);
+      if (callback) callback(node.key);
       results.push(node.key);
     }
-    if (callback) return callback(results);
     return results;
   }
 
@@ -146,57 +146,60 @@ class Tree {
   } 
   */
 
-  // inorder (left root right)
-  inOrder(callback?: Function) {
-    if (!this.root) return [];
-    const stack: (Node | undefined)[] = [];
-    const results = [];
-    let currentNode = this._root;
-    while (currentNode || stack.length) {
-      while (currentNode?.key) {
-        stack.push(currentNode);
-        currentNode = currentNode.left;
-      }
-      const node = stack.pop();
-      if (!node) return;
-      results.push(node.key);
-      currentNode = node.right;
-    }
-    if (callback) return callback(results);
-    return results;
-  }
+  // // inorder (left root right)
+  // inOrder(callback?: (value: number) => void) {
+  //   let currentNode = this._root;
+  //   if (!currentNode) return [];
+  //   const stack: Node[] = [];
+  //   const results: number[] = [];
 
-  /*   
+  //   while (currentNode || stack.length) {
+  //     while (currentNode && currentNode.key) {
+  //       stack.push(currentNode);
+  //       currentNode = currentNode.left;
+  //     }
+  //     const node = stack.pop();
+  //     if (!node) return;
+  //     if (callback) callback(node.key);
+  //     results.push(node.key);
+  //     currentNode = node.right;
+  //   }
+  //   return results;
+  // }
+
   // Recursive inOrder
-  inOrder(callback?: Function) {
+  inOrder(callback?: (value: number) => void) {
     const result: number[] = [];
     if (!this._root) return;
     this.inOrderTraversal(result, this._root, callback);
     return result;
   }
 
-  inOrderTraversal(result: number[], node?: Node, callback?: Function) {
+  inOrderTraversal(
+    result: number[],
+    node?: Node,
+    callback?: (value: number) => void
+  ) {
     if (!node) return result;
-    if (callback) return callback(node);
+    if (callback) return callback(node.key);
     this.inOrderTraversal(result, node.left, callback);
     result.push(node.key);
     this.inOrderTraversal(result, node.right, callback);
-  } 
-  */
+  }
 
   // postorder (left right root)
-  postOrder(callback?: Function) {
+  postOrder(callback?: (value: number) => void) {
     if (!this.root) return [];
     const stack = [this.root];
-    const results = [];
+    const results: number[] = [];
     while (stack.length) {
       const node = stack.pop();
       if (!node) return;
       if (node.left) stack.push(node.left);
       if (node.right) stack.push(node.right);
+      if (callback) callback(node.key);
       results.push(node.key);
     }
-    if (callback) return callback(results);
     return results.reverse();
   }
 
@@ -220,8 +223,8 @@ class Tree {
 
   height(node: Node | undefined): number {
     if (!node) return -1;
-    let leftHeight = this.height(node.left);
-    let rightHeight = this.height(node.right);
+    const leftHeight = this.height(node.left);
+    const rightHeight = this.height(node.right);
     return leftHeight > rightHeight ? leftHeight + 1 : rightHeight + 1;
   }
 
@@ -235,51 +238,21 @@ class Tree {
     }
   }
 
-  isBalanced(): Boolean {
-    if (!this.root) return true;
-    const stack = [this.root];
-    while (stack.length > 0) {
-      const node = stack.pop();
-      if (!node) return false;
-      const leftHeight = !node.left ? -1 : this.depth(node.left);
-      const rightHeight = !node.right ? -1 : this.depth(node.right);
-      if (Math.abs(leftHeight - rightHeight) > 1) {
-        return false;
-      }
-      if (node.left) {
-        stack.push(node.left);
-      }
-      if (node.right) {
-        stack.push(node.right);
-      }
-    }
-    return true;
+  isBalanced(root: Node | undefined): boolean {
+    if (!root) return true;
+    const lh = this.height(root.left);
+    const rh = this.height(root.right);
+    if (
+      Math.abs(lh - rh) <= 1 &&
+      this.isBalanced(root.left) &&
+      this.isBalanced(root.right)
+    )
+      return true;
+    else return false;
   }
 
   rebalance() {
-    if (this.isBalanced()) return;
     const inorder = this.inOrder();
-    this.root = this.buildTree(inorder);
+    this.root = inorder ? this.buildTree(inorder) : this._root;
   }
-  // TODO
-  // isBalanced()
-  // rebalance()
 }
-
-const tree = new Tree([2, 1, 3, 5, 7, 8, 6]);
-tree.insert(9);
-prettyPrint(tree.root);
-tree.deleteItem(7);
-prettyPrint(tree.root);
-console.log(tree.find(9)); // { _key: 9, _left: undefined, _right: undefined }
-console.log(tree.levelOrder());
-console.log(tree.preOrder());
-console.log(tree.postOrder());
-console.log(tree.inOrder());
-console.log(tree.height(tree.root)); // 2
-console.log(tree.height(tree.find(9))); // 0 -> leaf node
-console.log(tree.height(tree.find(3))); // 0 -> also a leaf node
-console.log(tree.depth(tree.find(5))); // 0 -> depth of root node
-console.log(tree.depth(tree.find(2))); // 1
-console.log(tree.depth(tree.find(11))); // -1
-console.log(tree.isBalanced());
