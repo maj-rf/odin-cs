@@ -1,30 +1,38 @@
-# React + TypeScript + Vite
+# Knights Travails
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The Knights Travails is a problem in finding the shortest possible path for a knight piece to traverse in between 2 blocks on a chessboard.
 
-Currently, two official plugins are available:
+|     |  A  |  B  |  C  |  D  |  E  |  F  |  G  |   H |
+| :-- | :-: | :-: | :-: | :-: | :-: | :-: | :-: | --: |
+| 8   |     |  S  |     |     |     |     |     |     |
+| 7   |     |  └  |  ─  |  K  |     |     |     |     |
+| 6   |     |     |     |  └  |  ─  |  K  |     |     |
+| 5   |     |     |     |     |     |  │  |     |     |
+| 4   |     |     |     |     |     |  └  |  K  |     |
+| 3   |     |     |     |     |  T  |  ─  |  ┘  |     |
+| 2   |     |     |     |     |     |     |     |     |
+| 1   |     |     |     |     |     |     |     |     |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- `S` - Initial Knight Position
+- `K` - Position traversed by Knight
+- `T` - Target
 
-## Expanding the ESLint configuration
+## What is a graph?
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json', './tsconfig.app.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```mermaid
+graph TD;
+    Percy---Annabeth;
+    Jason---Piper;
+    Jason---Leo;
+    Piper---Leo;
+    Percy---Jason;
+    Percy---Frank;
+    Percy---Hazel;
+    Frank---Hazel;
+    Annabeth---Piper;
+    Annabeth---Hazel;
+    Percy---Leo;
+    Percy---Piper;
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+The names are the `vertices`. The lines represent the `edges`. We denote an edge connecting vertices [u] and [v] by the pair (u,v) i.e. `(Percy,Annabeth)`. The number of edges incident on a vertex is the degree of the vertex.
