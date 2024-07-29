@@ -1,5 +1,7 @@
 # Binary Search Tree
 
+Try the [web app](https://binatry-tree-visualizer.vercel.app/)!
+
 ## What is a Binary Tree?
 
 A binary tree is a data structure in CS where each node has at most two children, often referred to as the left child and the right child. This structure allows for efficient searching, insertion, and deletion operations. Here are some key properties and concepts related to binary trees:
